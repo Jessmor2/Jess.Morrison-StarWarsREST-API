@@ -8,8 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
-#from models import Person
+from models import db, User, People, Planets, Vehicles, Favorites
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -44,6 +43,47 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/people', methods=['GET'])
+def handle_people():
+    return "hello people"
+
+@app.route('/people/<int:person_id>', methods=['PUT', 'GET'])
+def get_single_person(person_id):
+    if request.method == 'GET':
+        user1 = People.query.get(person_id)
+        return jsonify(user1.serialize()), 200
+    
+    return "Person not found", 404
+
+@app.route('/planets', methods=['GET'])
+def handle_planets():
+    return "hello planets"
+
+@app.route('/planets/<int:planets_id>', methods=['PUT', 'GET'])
+def get_single_planet(planets_id):
+    if request.method == 'GET':
+        user1 = Planets.query.get(planets_id)
+        return jsonify(user1.serialize()), 200
+    
+    return "Person not found", 404
+
+
+@app.route('/vehicles', methods=['GET'])
+def handle_vehicles():
+    return "Hello Vehicles"
+
+@app.route('/vehicles/<int:vehicles_id>', methods=['PUT', 'GET'])
+def get_single_vehicle(vehicles_id):
+    if request.method == 'GET':
+        user1 = Vehicles.query.get(vehicles_id)
+        return jsonify(user1.serialize()), 200
+    
+    return "Person not found", 404
+
+
+
+
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
