@@ -51,8 +51,8 @@ def handle_people():
 @app.route('/people/<int:person_id>', methods=['PUT', 'GET'])
 def get_single_person(person_id):
     if request.method == 'GET':
-        user1 = People.query.get(person_id)
-        return jsonify(user1.serialize()), 200
+        person1 = People.query.get(person_id)
+        return jsonify(person1.serialize()), 200
     
     return "Person not found", 404
 
@@ -63,21 +63,23 @@ def handle_planets():
 @app.route('/planets/<int:planets_id>', methods=['PUT', 'GET'])
 def get_single_planet(planets_id):
     if request.method == 'GET':
-        user1 = Planets.query.get(planets_id)
-        return jsonify(user1.serialize()), 200
+        planet1 = Planets.query.get(planets_id)
+        return jsonify(planet1.serialize()), 200
     
     return "Person not found", 404
 
 
 @app.route('/vehicles', methods=['GET'])
-def handle_vehicles():
-    return "Hello Vehicles"
-
+def handle_vehicles(vehicles_id):
+     if request.method == 'GET':
+        vehicles = map(Vehicles, Vehicles.query.get(vehicles_id))
+        return jsonify(vehicles.serialize()), 200
+     
 @app.route('/vehicles/<int:vehicles_id>', methods=['PUT', 'GET'])
 def get_single_vehicle(vehicles_id):
     if request.method == 'GET':
-        user1 = Vehicles.query.get(vehicles_id)
-        return jsonify(user1.serialize()), 200
+        vehicle1 = Vehicles.query.get(vehicles_id)
+        return jsonify(vehicle1.serialize()), 200
     
     return "Person not found", 404
 

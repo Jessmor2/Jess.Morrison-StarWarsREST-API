@@ -74,7 +74,7 @@ class Planets(db.Model):
     
 class Vehicles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    vehicles_name = db.Column(db.String(80), nullable=True)
+    vehicles_name = db.Column(db.String(80), nullable=False)
     model = db.Column(db.String(50), nullable=False)
     vehicle_class = db.Column(db.String(50), nullable=True)
     manufacturer = db.Column(db.String(50), nullable=True)
@@ -104,15 +104,15 @@ class Favorites(db.Model):
     people_id = db.Column(db.Integer, db.ForeignKey('people.id'), nullable=True)
     planets_id = db.Column(db.Integer, db.ForeignKey('planets.id'), nullable=True)
     vehicles_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'), nullable=True)
-    # user = db.relationship(User)
-    # people = db.relationship(People)
-    # planets = db.relationship(Planets)
-    # vehicles = db.relationship(Vehicles)
+    user = db.relationship(User)
+    people = db.relationship(People)
+    planets = db.relationship(Planets)
+    vehicles = db.relationship(Vehicles)
 
     def serialize(self):
         return {
-            # "user_id": self.user_id,
-            # "people_id": self.people_id,
-            # "vehicles_id": self.vehicles_id,
-            # "planets_id": self.planets_id,
+            "user_id": self.user_id,
+            "people_id": self.people_id,
+            "vehicles_id": self.vehicles_id,
+            "planets_id": self.planets_id,
         }
