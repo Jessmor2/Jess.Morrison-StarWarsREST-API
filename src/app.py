@@ -36,17 +36,17 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/user', methods=['GET'])
-def handle_hello():
-
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-
-    return jsonify(response_body), 200
+def handle_user(user_id):
+    getUser = User.query.get(user_id)
+    user_serialize = [human.serialize()for human in getUser]
+    return jsonify(user_serialize), 200
 
 @app.route('/people', methods=['GET'])
 def handle_people():
-    return "hello people"
+    if request.method == 'GET':
+        allPeople = People.query.all()
+        people_serialize = [character.serialize()for character in allPeople]
+        return jsonify(people_serialize), 200
 
 @app.route('/people/<int:person_id>', methods=['PUT', 'GET'])
 def get_single_person(person_id):
@@ -58,7 +58,9 @@ def get_single_person(person_id):
 
 @app.route('/planets', methods=['GET'])
 def handle_planets():
-    return "hello planets"
+    allPlanets = Planets.query.all()
+    planet_serialize = [world.serialize()for world in allPlanets]
+    return jsonify(planet_serialize), 200
 
 @app.route('/planets/<int:planets_id>', methods=['PUT', 'GET'])
 def get_single_planet(planets_id):
@@ -70,10 +72,10 @@ def get_single_planet(planets_id):
 
 
 @app.route('/vehicles', methods=['GET'])
-def handle_vehicles(vehicles_id):
-     if request.method == 'GET':
-        vehicles = map(Vehicles, Vehicles.query.get(vehicles_id))
-        return jsonify(vehicles.serialize()), 200
+def handle_vehicles():
+    allvehicles = Vehicles.query.all()
+    vehicle_serialize = [machine.serialize()for machine in allvehicles]
+    return jsonify(vehicle_serialize), 200
      
 @app.route('/vehicles/<int:vehicles_id>', methods=['PUT', 'GET'])
 def get_single_vehicle(vehicles_id):
@@ -83,9 +85,27 @@ def get_single_vehicle(vehicles_id):
     
     return "Person not found", 404
 
+@app.route('/favorites', methods=['GET'])
+def handle_favorites():
+    allFavorites = Favorites.query.all()
+    favorite_serialize = [saved.serialize()for saved in allFavorites]
+    return jsonify(favorite_serialize), 200
 
-
-
+@app.route('/favorites/planets/<int:planets_id>', methods=['POST'])
+def add_fav_planet(planets_id):
+    data = request.get_json()
+    new_Fav_Planet = Favorites(user_id=data["user_id"], planets_id = planets_id)
+    db.session.add(new_Fav_Planet)
+    db.session.commit()
+    return jsonify(new_Fav_Planet.serialize()), 200
+    
+@app.route('/favorites/planets/<int:planets_id>', methods=['DELETE'])
+def delete_fav_planet(planets_id):
+    data = request.get_json()
+    remove_planet = Favorites.query.filter_by(planets_id=planets_id).first()
+    db.session.delete(remove_planet)
+    db.session.commit()
+    return jsonify("removed planet successfully"), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
