@@ -35,11 +35,10 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
+@app.route('/user/<int:user_id>', methods=['GET'])
 def handle_user(user_id):
-    getUser = User.query.get(user_id)
-    user_serialize = [human.serialize()for human in getUser]
-    return jsonify(user_serialize), 200
+    user1 = User.query.get(user_id)
+    return jsonify(user1.serialize()), 200
 
 @app.route('/people', methods=['GET'])
 def handle_people():
@@ -98,14 +97,45 @@ def add_fav_planet(planets_id):
     db.session.add(new_Fav_Planet)
     db.session.commit()
     return jsonify(new_Fav_Planet.serialize()), 200
+@app.route('/favorites/people/<int:people_id>', methods=['POST'])
+def add_fav_person(person_id):
+    data = request.get_json()
+    new_Fav_Person = Favorites(user_id=data["user_id"], person_id = person_id)
+    db.session.add(new_Fav_Person)
+    db.session.commit()
+    return jsonify(new_Fav_Person.serialize()), 200
+@app.route('/favorites/vehicles/<int:vehicles_id>', methods=['POST'])
+def add_fav_vehicle(vehicles_id):
+    data = request.get_json()
+    new_Fav_Vehicle = Favorites(user_id=data["user_id"], vehicles_id = vehicles_id)
+    db.session.add(new_Fav_Vehicle)
+    db.session.commit()
+    return jsonify(new_Fav_Vehicle.serialize()), 200
     
 @app.route('/favorites/planets/<int:planets_id>', methods=['DELETE'])
 def delete_fav_planet(planets_id):
     data = request.get_json()
-    remove_planet = Favorites.query.filter_by(planets_id=planets_id).first()
+    user_id = data["user_id"]
+    remove_planet = Favorites.query.filter_by(planets_id=planets_id, user_id=user_id).first()
     db.session.delete(remove_planet)
     db.session.commit()
     return jsonify("removed planet successfully"), 200
+@app.route('/favorites/vehicles/<int:vehicles_id>', methods=['DELETE'])
+def delete_fav_vehicle(vehicles_id):
+    data = request.get_json()
+    user_id = data["user_id"]
+    remove_vehicle = Favorites.query.filter_by(vehicles_id=vehicles_id, user_id=user_id).first()
+    db.session.delete(remove_vehicle)
+    db.session.commit()
+    return jsonify("removed vehicle successfully"), 200
+@app.route('/favorites/people/<int:person_id>', methods=['DELETE'])
+def delete_fav_person(person_id):
+    data = request.get_json()
+    user_id = data["user_id"]
+    remove_person = Favorites.query.filter_by(person_id=person_id, user_id=user_id).first()
+    db.session.delete(remove_person)
+    db.session.commit()
+    return jsonify("removed person successfully"), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
